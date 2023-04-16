@@ -9,6 +9,7 @@ app = Ursina()
 
 from ursina.prefabs.platformer_controller_2d import PlatformerController2d
 
+
 # t=time.time()
 player = PlatformerController2d(
     walk_speed=100,
@@ -24,12 +25,17 @@ player = PlatformerController2d(
 )
 
 ### Animation
-player_graphics = SpriteSheetAnimation('resorces/charecters/combined_imager+l', tileset_size=(27, 2), fps=6, animations={
-    'shoot': ((26, 0), (27, 0)),
-    'run': ((15, 0), (25, 0)),
+player_graphics = SpriteSheetAnimation('resorces/charecters/combined_imager+l', tileset_size=(27, 2), fps=9, animations={
+    'shoot': ((25, 0), (26, 0)),
+    'run': ((15, 0), (24, 0)),
     'jump': ((9, 0), (14, 0)),
     'idle': ((5, 0), (8, 0)),
     'die': ((0, 0), (3, 0)),
+
+    'left_run':((2, 1), (11, 1)),
+    'left_idle': ((19, 1), (22, 1)),
+    'left_jump': ((12, 1), (18, 1)),
+    'left_shoot': ((0, 1), (1, 1)),
 
 },
 position=player.position, scale=(35, 35, 1))
@@ -142,15 +148,22 @@ enemy = Entity(model="cube", collider="box", color=color.red, position=(16, 5, -
 
 # for player animation
 
-isfacingR = True
-
+isfacingR = 1
+mover = 1
 def update():
+    global mover
     
     ### animation alingment
     player_graphics.position = player.position
     player_graphics.x = player.x + 10
     player_graphics.y = player.y + 20
+    # player_graphics.z = -1
+
+    if isfacingR == -1:
+        player_graphics.x = player.x - 10    
+
     ###
+    # player.x += isfacingR
 
     acid()
     if player.intersects(enemy).hit:
@@ -175,27 +188,42 @@ def update():
     else:
         player.walk_speed = 100
 
-    if not held_keys['d']:
-        player_graphics.play_animation('idle')
 
+    is_idle = held_keys['d'] + held_keys['a'] + held_keys['space'] + held_keys['f']
+    if is_idle == 0:
+        if isfacingR == 1:
+            print(isfacingR)
+            player_graphics.play_animation('idle')
+        else:
+            print(isfacingR)
+            player_graphics.play_animation('left_idle')    
     
 # trial for animation
 def input(key):
     global isfacingR
 
     if key == 'd':
-        isfacingR = True
+        isfacingR = 1
         player_graphics.play_animation('run')
+          
     if key == 'a':
-        isfacingR = False
-
+        isfacingR = -1
+        player_graphics.play_animation('left_run')
            
-    elif key == 'space':
-        print('runing...')
-        player_graphics.play_animation('jump')
-    elif key == 'f':
-        print('runing...')
-        player_graphics.play_animation('shoot')
+    if key == 'space':
+        print(isfacingR)
+        if isfacingR == 1:
+            player_graphics.play_animation('jump')
+        else:
+            player_graphics.play_animation('left_jump')
+
+    if key == 'f':
+        if isfacingR == 1:
+            player_graphics.play_animation('shoot')
+        else:
+            player_graphics.play_animation('left_shoot')
+
+       
     
 
 #####
