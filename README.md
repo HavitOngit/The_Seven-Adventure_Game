@@ -2,4 +2,4 @@
 
 We have Story.
 
-(Loops Not included and not boring EndLess Runner)
+(Loops Not included and not A boring EndLess Runner)
