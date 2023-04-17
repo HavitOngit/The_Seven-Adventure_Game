@@ -1,6 +1,6 @@
 from ursina import *
 from ursina.prefabs.health_bar import HealthBar
-
+import pyautogui
 from time import sleep
 
 from custom_animation import SpriteSheetAnimation
@@ -23,7 +23,7 @@ player = PlatformerController2d(
     jump_height=30,
     color=(123, 214, 123, .10)
 )
-a = Entity(model='cube', texture='resorces\collectables\Medkit.png', collider = 'box', scale = (95, 53, 1), position = (405, 217, 0.01))
+
 ### Animation
 player_graphics = SpriteSheetAnimation('resorces/charecters/combined_imager+l', tileset_size=(27, 2), fps=9, animations={
     'shoot': ((25, 0), (26, 0)),
@@ -40,11 +40,6 @@ player_graphics = SpriteSheetAnimation('resorces/charecters/combined_imager+l', 
 },
 position=player.position, scale=(35, 35, 1))
 
-enime_graphics = SpriteSheetAnimation('resorces\charecters\\briner.png', tileset_size=(8, 6), fps=9, animations={
-    'run': ((0, 5), (3, 5)),
-    
-    
-},position=player.position, scale=(35, 35, 1))
 ### animation End
 window = WindowPanel(
     title="GAME OVER!!",
@@ -52,7 +47,7 @@ window = WindowPanel(
     scale=(0.9, 0.6),
     draggable=False,
     visible=False,
-    #texture="Game_Over_Msg.jpg",
+    texture="Game_Over_Msg.jpg",
 )
 player1 = WindowPanel(
     title="Player",
@@ -76,11 +71,11 @@ def acid():
     dis = Vec2(player.x, player.y) - Vec2(571, 129)
     if distance.length() < 30:
         damage(5)
-    if dis.length() < 20:
+    if dis.length() < 80:
         damage(5)
 
-def damage(power):
-    HB1.value -= power
+def damage():
+    HB1.value -= 1
 
 # invoke(damage, delay=1, repeat=True)
 
@@ -88,12 +83,7 @@ def damage(power):
 def heal(power):
     HB1.value += power
 
-def health():
-    
-    if a.intersects(player):
-        heal(50)
-    
-    
+
 ground = Entity(model="quad", scale_x=10, collider="box", color=color.black)
 restart_button = Button(
     text="Restart", scale=(0.1, 0.05), position=(0, -0.1), visible=False
@@ -176,23 +166,22 @@ def update():
     # player.x += isfacingR
 
     acid()
-    health()
     if player.intersects(enemy).hit:
         print("die")
-        
-        
+        sleep(1)
+        pyautogui.click(x=1687, y=111)
 
     if HB1.value == 0:
         print("GAME OVER!!!")
-        
-
-        
+        sleep(1)
+        pyautogui.click(x=1687, y=111)
+        return 0
     if player.y < 0:
         HB1.value = 0
         window.visible = True
         restart_button.visible = True
-        
-        
+        sleep(1)
+        pyautogui.click(x=1687, y=111)
 
     if held_keys["shift"]:
         player.walk_speed = 300
@@ -210,7 +199,6 @@ def update():
             player_graphics.play_animation('left_idle')    
     
 # trial for animation
-enime_graphics.play_animation('run')
 def input(key):
     global isfacingR
 
@@ -235,9 +223,9 @@ def input(key):
         else:
             player_graphics.play_animation('left_shoot')
 
-# only for bg       
-  
-Sky(color=color.dark_gray)
+       
+    
+
 #####
 
 input_handler.bind("right arrow", "d")
