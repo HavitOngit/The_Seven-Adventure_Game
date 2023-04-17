@@ -59,10 +59,10 @@ player1 = WindowPanel(
 )
 
 def code():
-    b=Animation('code.gif')
+    b=Animation('Levels/code.gif')
     b.scale=(40,40)
     b.position=(723, 536)
-
+ 
 def health():
     a=Animation('hp.gif')
     a.scale=(70,70)

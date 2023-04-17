@@ -1,6 +1,6 @@
 from ursina import *
 from ursina.prefabs.health_bar import HealthBar
-import pyautogui
+
 from time import sleep
 
 from custom_animation import SpriteSheetAnimation
@@ -71,11 +71,11 @@ def acid():
     dis = Vec2(player.x, player.y) - Vec2(571, 129)
     if distance.length() < 30:
         damage(5)
-    if dis.length() < 80:
+    if dis.length() < 20:
         damage(5)
 
-def damage():
-    HB1.value -= 1
+def damage(power):
+    HB1.value -= power
 
 # invoke(damage, delay=1, repeat=True)
 
@@ -83,7 +83,14 @@ def damage():
 def heal(power):
     HB1.value += power
 
-
+def health():
+    a = Entity(texture='resorces\collectables\Medkit.png')
+    a.collider = 'box'
+    a.scale = (70, 70)
+    a.position = (409, 212)
+    if a.intersects(player):
+        heal(50)
+    
 ground = Entity(model="quad", scale_x=10, collider="box", color=color.black)
 restart_button = Button(
     text="Restart", scale=(0.1, 0.05), position=(0, -0.1), visible=False
@@ -166,22 +173,23 @@ def update():
     # player.x += isfacingR
 
     acid()
+    
     if player.intersects(enemy).hit:
         print("die")
         sleep(1)
-        pyautogui.click(x=1687, y=111)
+        
 
     if HB1.value == 0:
         print("GAME OVER!!!")
         sleep(1)
-        pyautogui.click(x=1687, y=111)
-        return 0
+
+        
     if player.y < 0:
         HB1.value = 0
         window.visible = True
         restart_button.visible = True
         sleep(1)
-        pyautogui.click(x=1687, y=111)
+        
 
     if held_keys["shift"]:
         player.walk_speed = 300
