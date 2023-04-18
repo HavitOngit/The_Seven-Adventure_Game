@@ -25,26 +25,43 @@ player = PlatformerController2d(
 )
 a = Entity(model='cube', texture='resorces\collectables\Medkit.png', collider = 'box', scale = (95, 53, 1), position = (405, 217, 0.01))
 ### Animation
-player_graphics = SpriteSheetAnimation('resorces/charecters/combined_imager+l', tileset_size=(27, 2), fps=9, animations={
+player_graphics = SpriteSheetAnimation('resorces/charecters/combined_imager+l', tileset_size=(27, 2), fps=9,position=player.position, scale=(35, 35, 1), animations={
     'shoot': ((25, 0), (26, 0)),
     'run': ((15, 0), (24, 0)),
     'jump': ((9, 0), (14, 0)),
     'idle': ((5, 0), (8, 0)),
     'die': ((0, 0), (3, 0)),
 
+
     'left_run':((2, 1), (11, 1)),
     'left_idle': ((19, 1), (22, 1)),
     'left_jump': ((12, 1), (18, 1)),
     'left_shoot': ((0, 1), (1, 1)),
 
-},
-position=player.position, scale=(35, 35, 1))
+})
 
-enime_graphics = SpriteSheetAnimation('resorces\charecters\\briner.png', tileset_size=(8, 6), fps=9, animations={
+### enemy
+enime_graphics = SpriteSheetAnimation('resorces\charecters\\briner.png', tileset_size=(8, 6), fps=9,position=player.position, scale=(35, 35, 1), animations={
+    'hyper': ((0, 3), (5, 3)),
     'run': ((0, 5), (3, 5)),
     
-    
-},position=player.position, scale=(35, 35, 1))
+})
+
+
+
+
+def enime_attack():
+    dife = player.x - enime_graphics.x
+    if dife <= 5:
+        enime_graphics.play_animation('hyper')
+    if enime_graphics.position <= (564, 356, -2):
+        enime_graphics.x += 2
+    if enime_graphics.position <= (362, 356, -2):
+        enime_graphics.x -= 2    
+           
+
+
+### Enime end
 ### animation End
 window = WindowPanel(
     title="GAME OVER!!",
@@ -177,6 +194,10 @@ def update():
 
     acid()
     health()
+
+    ### Enime
+    enime_attack()
+
     if player.intersects(enemy).hit:
         print("die")
         
@@ -210,7 +231,8 @@ def update():
             player_graphics.play_animation('left_idle')    
     
 # trial for animation
-enime_graphics.play_animation('run')
+#enime_graphics.play_animation('run')
+
 def input(key):
     global isfacingR
 
