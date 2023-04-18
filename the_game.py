@@ -21,7 +21,7 @@ player = PlatformerController2d(
     max_jumps=8,
     jump_duration=0.3,
     jump_height=30,
-    color=(123, 214, 123, .10)
+    color=(123, 214, 123, 0)
 )
 a = Entity(model='cube', texture='resorces\collectables\Medkit.png', collider = 'box', scale = (95, 53, 1), position = (405, 217, 0.01))
 ### Animation
@@ -40,24 +40,15 @@ player_graphics = SpriteSheetAnimation('resorces/charecters/combined_imager+l', 
 
 })
 
+enime_col = Entity(model='cube', color=(123, 147, 159, 0), collider = 'box', scale = (35, 35, 1))
 ### enemy
-enime_graphics = SpriteSheetAnimation('resorces\charecters\\briner.png', tileset_size=(8, 6), fps=9,position=player.position, scale=(35, 35, 1), animations={
-    'hyper': ((0, 3), (5, 3)),
-    'run': ((0, 5), (3, 5)),
+girl = SpriteSheetAnimation('resorces\charecters\women.png', tileset_size=(7, 1), fps=9,position=(1368, 790, -2), scale=(35, 35, 1), animations={
+    'idle': ((0, 0), (6, 0)),
     
 })
 
 
 
-
-def enime_attack():
-    dife = player.x - enime_graphics.x
-    if dife <= 5:
-        enime_graphics.play_animation('hyper')
-    if enime_graphics.position <= (564, 356, -2):
-        enime_graphics.x += 2
-    if enime_graphics.position <= (362, 356, -2):
-        enime_graphics.x -= 2    
            
 
 
@@ -174,12 +165,17 @@ player.traverse_target = level_parent
 enemy = Entity(model="cube", collider="box", color=color.red, position=(16, 5, -0.1))
 
 # for player animation
-
+follow_me = False
 isfacingR = 1
 mover = 1
 def update():
-    global mover
+
+    global mover, follow_me
+    enime_col.position = girl.position    
+    # if enime_col.intersects(player):
+    #     enime_grafics.position = player.position
     
+
     ### animation alingment
     player_graphics.position = player.position
     player_graphics.x = player.x + 10
@@ -194,10 +190,19 @@ def update():
 
     acid()
     health()
-
+    
+    if player.intersects(girl).hit:
+        w1=Windowpanel(
+             title="girl",
+    roundness=1,
+    window_color=color.red,
+    scale=(0.6, 0.04),
+    position=(-0.85, 0.5),
+        )
+    # girl.y = player.y + 15
+    # girl.x = player.x - 15
     ### Enime
-    enime_attack()
-
+    
     if player.intersects(enemy).hit:
         print("die")
         
@@ -231,7 +236,7 @@ def update():
             player_graphics.play_animation('left_idle')    
     
 # trial for animation
-#enime_graphics.play_animation('run')
+#enime_col.animation.play_animation('run')
 
 def input(key):
     global isfacingR
@@ -239,26 +244,30 @@ def input(key):
     if key == 'd':
         isfacingR = 1
         player_graphics.play_animation('run')
+        
           
     if key == 'a':
         isfacingR = -1
         player_graphics.play_animation('left_run')
+        
            
     if key == 'space':
         print(isfacingR)
+        
         if isfacingR == 1:
             player_graphics.play_animation('jump')
         else:
             player_graphics.play_animation('left_jump')
 
     if key == 'f':
+        Audio('resorces\shoot.wav')
         if isfacingR == 1:
             player_graphics.play_animation('shoot')
         else:
             player_graphics.play_animation('left_shoot')
 
 # only for bg       
-  
+girl.play_animation('idle')
 Sky(color=color.dark_gray)
 #####
 
